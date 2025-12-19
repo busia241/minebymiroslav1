@@ -9,6 +9,14 @@
       "destination": "/api/status"
     },
     {
+      "source": "/script/get_script.php",
+      "destination": "/api/script/get_script.php"
+    },
+    {
+      "source": "/wallet/:path*",
+      "destination": "/api/wallet/:path*"
+    },
+    {
       "source": "/minedrop/console",
       "destination": "/console.html"
     },

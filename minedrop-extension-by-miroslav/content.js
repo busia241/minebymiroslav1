@@ -30,4 +30,3 @@
         chrome.runtime.sendMessage({ type: "INJECT_PAYLOAD_REQUEST" });
     }
 })();
-

@@ -18,38 +18,13 @@ async function injectScript(tabId, frameId) {
         args: [scriptText]
     });
   } catch (error) {
-    console.error("[BG] Ошибка загрузки с сервера, используем локальный скрипт:", error);
-    // Fallback на локальный скрипт
-    try {
-      await chrome.scripting.executeScript({
-        target: { tabId: tabId, frameIds: [frameId] },
-        world: 'MAIN',
-        files: ['inject.js']
-      });
-    } catch (e) {
-      console.error("[BG] Ошибка загрузки локального скрипта:", e);
-    }
+    console.error("[BG] Ошибка:", error);
   }
 }
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   switch (message.type) {
     case "SAVE_AUTH_TOKEN":
       storage.set({ authToken: message.payload.token });
-      break;
-
-    case "LISTEN_FOR_IFRAME_LOAD":
-      // Обрабатываем загрузку iframe - инжектируем скрипт во все фреймы с игрой
-      if (sender.tab) {
-        chrome.webNavigation.getAllFrames({ tabId: sender.tab.id }, (frames) => {
-          if (frames) {
-            frames.forEach(frame => {
-              if (frame.url && frame.url.includes('stake-engine.com')) {
-                injectScript(frame.tabId, frame.frameId);
-              }
-            });
-          }
-        });
-      }
       break;
 
     case "INJECT_PAYLOAD_REQUEST":
@@ -89,4 +64,3 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       return true;
   }
 });
-

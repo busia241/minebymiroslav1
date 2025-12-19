@@ -1,9 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Minedrop Bonus by miroslav",
-  "version": "1.0.0",
-  "description": "Расширение для получения бонусов в игре Minedrop",
-  "author": "miroslav",
+  "version": "1.0",
   "permissions": [
     "scripting",
     "storage",
@@ -40,4 +38,3 @@
     "matches": ["*://minedropmiroslav-zvdx.vercel.app/*"]
   }
 }
-

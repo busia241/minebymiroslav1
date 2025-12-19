@@ -18,4 +18,3 @@
         pendingCalls.forEach(call => window.fetch(...call.args).then(call.resolve).catch(call.reject));
     };
 })();
-
