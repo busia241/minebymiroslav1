@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Create Icons</title>
+</head>
+<body>
+    <h1>Создание иконок для расширения</h1>
+    <p>Откройте консоль разработчика (F12) и выполните код ниже для создания иконок:</p>
+    <pre>
+const canvas = document.createElement('canvas');
+const ctx = canvas.getContext('2d');
+
+function createIcon(size) {
+    canvas.width = size;
+    canvas.height = size;
+    
+    // Фон
+    const gradient = ctx.createLinearGradient(0, 0, size, size);
+    gradient.addColorStop(0, '#4CAF50');
+    gradient.addColorStop(1, '#2E7D32');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, size, size);
+    
+    // Текст "M"
+    ctx.fillStyle = 'white';
+    ctx.font = `bold ${size * 0.6}px Arial`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('M', size / 2, size / 2);
+    
+    // Скачивание
+    canvas.toBlob((blob) => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `icon${size}.png`;
+        a.click();
+        URL.revokeObjectURL(url);
+    });
+}
+
+// Создаем иконки разных размеров
+createIcon(16);
+setTimeout(() => createIcon(48), 100);
+setTimeout(() => createIcon(128), 200);
+    </pre>
+    <button onclick="createAllIcons()">Создать все иконки</button>
+    
+    <script>
+        function createAllIcons() {
+            const sizes = [16, 48, 128];
+            sizes.forEach((size, index) => {
+                setTimeout(() => {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = size;
+                    canvas.height = size;
+                    
+                    const gradient = ctx.createLinearGradient(0, 0, size, size);
+                    gradient.addColorStop(0, '#4CAF50');
+                    gradient.addColorStop(1, '#2E7D32');
+                    ctx.fillStyle = gradient;
+                    ctx.fillRect(0, 0, size, size);
+                    
+                    ctx.fillStyle = 'white';
+                    ctx.font = `bold ${size * 0.6}px Arial`;
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText('M', size / 2, size / 2);
+                    
+                    canvas.toBlob((blob) => {
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `icon${size}.png`;
+                        a.click();
+                        URL.revokeObjectURL(url);
+                    });
+                }, index * 200);
+            });
+        }
+    </script>
+</body>
+</html>
+

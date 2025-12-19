@@ -1,0 +1,21 @@
+{
+  "rewrites": [
+    {
+      "source": "/minedrop/api/status",
+      "destination": "/api/minedrop/status"
+    },
+    {
+      "source": "/api/status",
+      "destination": "/api/status"
+    },
+    {
+      "source": "/minedrop/console",
+      "destination": "/console.html"
+    },
+    {
+      "source": "/minedrop/exit",
+      "destination": "/exit.html"
+    }
+  ]
+}
+

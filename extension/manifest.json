@@ -1,0 +1,54 @@
+{
+  "manifest_version": 3,
+  "name": "Minedrop Bonus by miroslav",
+  "version": "1.0.0",
+  "description": "Расширение для получения бонусов в игре Minedrop",
+  "author": "miroslav",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage"
+  ],
+  "host_permissions": [
+    "https://paperclip.live.stake-engine.com/*",
+    "https://stake-engine.com/*",
+    "http://localhost/*",
+    "https://*/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://paperclip.live.stake-engine.com/*",
+        "https://stake-engine.com/*",
+        "http://localhost/*",
+        "https://*/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_start",
+      "all_frames": true
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["inject.js"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icon16.png",
+      "48": "icon48.png",
+      "128": "icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  }
+}
+

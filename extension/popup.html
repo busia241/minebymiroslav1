@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            width: 300px;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 18px;
+            color: #4CAF50;
+        }
+        .status {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .status-item:last-child {
+            margin-bottom: 0;
+        }
+        .status-label {
+            color: #aaa;
+        }
+        .status-value {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Minedrop Bonus</h1>
+        <p style="font-size: 12px; color: #888; margin: 5px 0;">by miroslav</p>
+    </div>
+    <div class="status">
+        <div class="status-item">
+            <span class="status-label">Статус:</span>
+            <span class="status-value" id="status">Активно</span>
+        </div>
+        <div class="status-item">
+            <span class="status-label">Бонус:</span>
+            <span class="status-value">+1000 к балансу</span>
+        </div>
+        <div class="status-item">
+            <span class="status-label">Множитель:</span>
+            <span class="status-value">x1.5 к выигрышу</span>
+        </div>
+    </div>
+    <div class="footer">
+        Расширение активно работает
+    </div>
+    <script src="popup.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,21 @@
+{
+  "name": "minedrop-game",
+  "version": "1.0.0",
+  "description": "Minedrop game with bonus extension by miroslav",
+  "main": "index.html",
+  "type": "module",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo 'No build step required'",
+    "start": "vercel dev"
+  },
+  "keywords": [
+    "minedrop",
+    "game",
+    "casino",
+    "extension"
+  ],
+  "author": "miroslav",
+  "license": "MIT"
+}
+
