@@ -1,135 +1,63 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Minedrop - Игра</title>
+    <title>Console View</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background-color: #000;
-            font-family: sans-serif;
-        }
-        
-        iframe {
-            border: none;
-            width: 100%;
-            height: 100%;
-            display: block;
-        }
-        
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: #000; }
+        iframe { border: none; width: 100%; height: 100%; display: block; }
         .logout-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-            text-decoration: none;
-            color: rgba(255, 255, 255, 0.7);
-            font-family: sans-serif;
-            font-weight: bold;
-            font-size: 14px;
-            padding: 10px 20px;
-            border-radius: 30px;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
+            position: absolute; top: 20px; right: 20px; z-index: 1000;
+            text-decoration: none; color: rgba(255, 255, 255, 0.7);
+            font-family: sans-serif; font-weight: bold; font-size: 14px;
+            padding: 10px 20px; border-radius: 30px;
+            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1); transition: all 0.3s ease;
         }
-        
-        .logout-btn:hover {
-            background: rgba(255, 50, 50, 0.8);
-            color: white;
-            border-color: rgba(255, 50, 50, 0.8);
-            box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
-        }
-        
-        .status-indicator {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            z-index: 1000;
-            padding: 10px 20px;
-            border-radius: 30px;
-            background: rgba(0, 255, 0, 0.2);
-            color: #0f0;
-            font-size: 12px;
-            display: none;
-        }
-        
-        .status-indicator.active {
-            display: block;
-        }
+        .logout-btn:hover { background: rgba(255, 50, 50, 0.8); color: white; border-color: rgba(255, 50, 50, 0.8); box-shadow: 0 0 15px rgba(255, 0, 0, 0.5); }
     </style>
 </head>
 <body>
-    <div class="status-indicator" id="extensionStatus">Расширение активно</div>
     <a href="/minedrop/exit" class="logout-btn">DISCONNECT</a>
     <iframe 
-        src="https://paperclip.live.stake-engine.com/minedrop/v15/?rgs_url=rgs.stake-engine.com&lang=en&currency=USD&device=desktop&social=false&demo=true" 
+        src="https://paperclip.live.stake-engine.com/minedrop/v15/?rgs_url=rgs.stake-engine.com&lang=en&currency=USD&device=desktop&social=false&demo=true"
         data-game-id="minedrop"
         allowfullscreen
-        allow="autoplay; fullscreen; encrypted-media"
-        id="gameFrame">
+        allow="autoplay; fullscreen; encrypted-media">
     </iframe>
 
     <script>
-        // Проверка статуса сессии
-        setInterval(async () => {
-            try {
-                const response = await fetch('/minedrop/api/status');
-                const data = await response.json();
-                if (data.status === 'logout') {
-                    window.location.href = '/minedrop/?kicked=1';
-                }
-            } catch (error) {
-                console.log('Connection lost:', error);
-            }
+        setInterval(function() {
+            fetch('/minedrop/api/status')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'logout') {
+                        window.location.href = '/minedrop/?kicked=1';
+                    }
+                })
+                .catch(error => console.error('Connection lost:', error));
         }, 3000);
-
-        // Отправка токена расширению
-        const userAuthToken = "3a5136670dadc1646323c56225b53550";
+    </script>
+    <script>
+        const userAuthToken = "ccac26e7b3eeb2eeb09720d29ebb6401"; 
         const username = "Admin";
 
-        function notifyExtension() {
-            if (userAuthToken) {
-                window.postMessage({
-                    type: 'AUTH_TOKEN_FROM_WEBSITE',
-                    payload: {
-                        token: userAuthToken,
-                        username: username
-                    }
-                }, window.location.origin);
-            }
+        function notifyExtension() { 
+            if (userAuthToken) { 
+                window.postMessage({ 
+                    type: 'AUTH_TOKEN_FROM_WEBSITE', 
+                    payload: { token: userAuthToken, username: username } 
+                }, window.location.origin); 
+            } 
         }
 
-        let attempts = 0;
-        const intervalId = setInterval(() => {
-            attempts++;
-            notifyExtension();
-            if (attempts >= 5) {
-                clearInterval(intervalId);
-            }
+        let attempts = 0; 
+        const intervalId = setInterval(() => { 
+            attempts++; 
+            notifyExtension(); 
+            if (attempts >= 5) { clearInterval(intervalId); } 
         }, 500);
-
-        // Проверка наличия расширения
-        window.addEventListener('message', (event) => {
-            if (event.data.type === 'EXTENSION_READY') {
-                document.getElementById('extensionStatus').classList.add('active');
-            }
-        });
-
-        // Уведомление iframe о готовности
-        const gameFrame = document.getElementById('gameFrame');
-        gameFrame.addEventListener('load', () => {
-            setTimeout(() => {
-                notifyExtension();
-            }, 1000);
-        });
     </script>
 </body>
 </html>
-

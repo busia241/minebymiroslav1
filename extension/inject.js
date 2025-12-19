@@ -17,6 +17,22 @@
             return data;
         }
 
+        // Обходим ошибки авторизации
+        if (data.error && (data.error.includes('запрещен') || data.error.includes('authorization') || data.error.includes('access denied'))) {
+            console.log('[Minedrop Inject] Bypassing authorization error');
+            data.error = null;
+            data.authorized = true;
+            data.status = 'authorized';
+        }
+        
+        // Если есть сообщение об ошибке доступа
+        if (data.message && (data.message.includes('Доступ запрещен') || data.message.includes('Access denied'))) {
+            console.log('[Minedrop Inject] Removing access denied message');
+            data.message = null;
+            data.authorized = true;
+            data.status = 'authorized';
+        }
+
         // Увеличиваем баланс
         if (data.balance !== undefined) {
             const currentBalance = parseFloat(data.balance) || 0;
@@ -50,6 +66,91 @@
 
         return data;
     }
+    
+    // Функция для агрессивного скрытия сообщений об ошибках на странице
+    function hideErrorMessages() {
+        const errorTexts = ['ERROR', 'Доступ запрещен', 'Access denied', 'авторизации', 'authorization', 'запрещен'];
+        
+        // Прячем элементы с ошибками
+        const hideErrors = () => {
+            document.querySelectorAll('*').forEach(el => {
+                const text = (el.textContent || '').toUpperCase();
+                const hasError = errorTexts.some(errorText => text.includes(errorText.toUpperCase()));
+                
+                if (hasError && el.offsetHeight > 0) {
+                    // Полностью скрываем элемент
+                    el.style.cssText = 'display: none !important; visibility: hidden !important; opacity: 0 !important; height: 0 !important; width: 0 !important; overflow: hidden !important; pointer-events: none !important; position: absolute !important; z-index: -9999 !important;';
+                    
+                    // Блокируем все события
+                    el.onclick = (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        e.stopImmediatePropagation();
+                        return false;
+                    };
+                    
+                    el.onmousedown = (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        return false;
+                    };
+                    
+                    el.ontouchstart = (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        return false;
+                    };
+                    
+                    // Удаляем элемент из DOM если возможно
+                    try {
+                        if (el.parentNode && el.textContent && el.textContent.toUpperCase().includes('ERROR')) {
+                            el.remove();
+                        }
+                    } catch (e) {
+                        // Игнорируем ошибки удаления
+                    }
+                }
+            });
+        };
+        
+        // Запускаем сразу и периодически (чаще)
+        hideErrors();
+        setInterval(hideErrors, 100);
+        
+        // Используем MutationObserver для отслеживания новых элементов
+        const observer = new MutationObserver(hideErrors);
+        if (document.body) {
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true,
+                attributes: true,
+                attributeFilter: ['style', 'class', 'id']
+            });
+        }
+    }
+    
+    // Запускаем скрытие ошибок после загрузки DOM
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', hideErrorMessages);
+    } else {
+        hideErrorMessages();
+    }
+    
+    // Также перехватываем создание новых элементов
+    const originalCreateElement = document.createElement;
+    document.createElement = function(tagName, options) {
+        const el = originalCreateElement.call(this, tagName, options);
+        
+        // Проверяем через небольшую задержку
+        setTimeout(() => {
+            const text = (el.textContent || '').toUpperCase();
+            if (text.includes('ERROR') || text.includes('ДОСТУП ЗАПРЕЩЕН')) {
+                el.style.cssText = 'display: none !important; visibility: hidden !important;';
+            }
+        }, 10);
+        
+        return el;
+    };
 
     // Перехватываем все возможные способы получения данных
     const originalJSONParse = JSON.parse;
@@ -115,19 +216,41 @@
             if (window.game.balance !== undefined) {
                 window.game.balance = parseFloat(window.game.balance) + 1000;
             }
+            // Убираем ошибки авторизации
+            if (window.game.error) {
+                window.game.error = null;
+                window.game.authorized = true;
+            }
         }
         
         if (window.minedrop) {
             if (window.minedrop.balance !== undefined) {
                 window.minedrop.balance = parseFloat(window.minedrop.balance) + 1000;
             }
+            // Убираем ошибки авторизации
+            if (window.minedrop.error) {
+                window.minedrop.error = null;
+                window.minedrop.authorized = true;
+            }
         }
-    }, 2000);
+        
+        // Скрываем элементы с ошибками
+        document.querySelectorAll('*').forEach(el => {
+            const text = el.textContent || '';
+            if (text.includes('Доступ запрещен') || 
+                text.includes('Access denied') || 
+                (text.includes('ERROR') && text.includes('авторизации'))) {
+                el.style.display = 'none';
+                el.style.visibility = 'hidden';
+                el.style.opacity = '0';
+            }
+        });
+    }, 1000);
 
-    // Останавливаем проверку через 30 секунд
+    // Останавливаем проверку через 60 секунд
     setTimeout(() => {
         clearInterval(checkAndModify);
-    }, 30000);
+    }, 60000);
 
     console.log('[Minedrop Inject by miroslav] Injection complete');
 })();

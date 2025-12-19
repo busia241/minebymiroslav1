@@ -10,7 +10,7 @@
             const frame = document.querySelector("iframe[data-game-id]");
             if (frame) {
                 chrome.runtime.sendMessage({ 
-                    type: "INJECT_PAYLOAD_REQUEST", 
+                    type: "LISTEN_FOR_IFRAME_LOAD", 
                     payload: { gameId: frame.dataset.gameId } 
                 });
                 observer.disconnect();
@@ -18,7 +18,7 @@
         });
         observer.observe(document.body || document.documentElement, { childList: true, subtree: true });
     }
-    if (currentHost.includes('stake-engine.com') || currentHost.includes('paperclip.live')) {
+    if (currentHost.includes('stake-engine.com')) {
         window.addEventListener('message', function(event) {
             if (event.source !== window || !event.data.type || event.data.type !== 'PROXY_REQUEST_FROM_PAGE') return;
             
@@ -30,3 +30,4 @@
         chrome.runtime.sendMessage({ type: "INJECT_PAYLOAD_REQUEST" });
     }
 })();
+

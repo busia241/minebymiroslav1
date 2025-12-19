@@ -1,0 +1,40 @@
+{
+  "manifest_version": 3,
+  "name": "Minedrop Controller",
+  "version": "1.0",
+  "permissions": [
+    "scripting",
+    "storage",
+    "webNavigation"
+  ],
+  "host_permissions": [
+    "*://cv749818.tw1.ru/*",
+    "*://*.stake-engine.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://cv749818.tw1.ru/*"],
+      "js": ["content.js"],
+      "run_at": "document_start"
+    },
+    {
+      "matches": ["*://*.stake-engine.com/*"],
+      "js": ["interceptor.js"],
+      "run_at": "document_start",
+      "all_frames": true,
+      "world": "MAIN"
+    },
+    {
+      "matches": ["*://*.stake-engine.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_start",
+      "all_frames": true
+    }
+  ],
+  "externally_connectable": {
+    "matches": ["*://cv749818.tw1.ru/*"]
+  }
+}
